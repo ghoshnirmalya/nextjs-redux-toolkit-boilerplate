@@ -5,14 +5,7 @@ import {
   createDraftSafeSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-
-type User = {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  avatar: string;
-};
+import { User } from "types/user";
 
 interface RejectedAction extends Action {
   payload: {

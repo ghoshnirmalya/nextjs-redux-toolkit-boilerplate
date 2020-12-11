@@ -1,15 +1,8 @@
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUsers, selectUsers } from "../slices/users";
-
-type User = {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  avatar: string;
-};
+import { getUsers, selectUsers } from "slices/users";
+import { User } from "types/user";
 
 interface IProps {
   data: User[];
