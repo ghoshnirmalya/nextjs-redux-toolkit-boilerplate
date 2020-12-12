@@ -1,10 +1,13 @@
 import {
   Action,
   AnyAction,
+  createAction,
   createAsyncThunk,
   createDraftSafeSelector,
   createSlice,
 } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+import { AppState } from "store";
 import { User } from "types/user";
 
 interface RejectedAction extends Action {
@@ -18,6 +21,8 @@ interface IUsersState {
   loading: string;
   error: any;
 }
+
+const hydrate = createAction(HYDRATE);
 
 function isRejectedAction(action: AnyAction): action is RejectedAction {
   return action.type.endsWith("rejected");
@@ -43,13 +48,19 @@ const initialState: IUsersState = {
   error: null,
 };
 
-const usersSlice = createSlice({
+export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getUsers.pending, (state, action) => {
+      .addCase(hydrate, (state, action) => {
+        return {
+          ...state,
+          ...(action.payload as any)[usersSlice.name],
+        };
+      })
+      .addCase(getUsers.pending, (state) => {
         state.users = [];
         state.loading = "loading";
       })
@@ -64,13 +75,8 @@ const usersSlice = createSlice({
   },
 });
 
-export const selectUsers = createDraftSafeSelector(
-  (state: any) => state,
-  (state: { users: IUsersState }) => ({
-    users: state.users.users,
-    loading: state.users.loading,
-    error: state.users.error,
-  })
-);
-
-export default usersSlice.reducer;
+export const selectUsers = () =>
+  createDraftSafeSelector(
+    (state: AppState) => state,
+    (state: AppState) => state?.[usersSlice.name]
+  );

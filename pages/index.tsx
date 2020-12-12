@@ -1,25 +1,17 @@
-import { GetServerSideProps } from "next";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { getUsers, selectUsers } from "slices/users";
+import { wrapper } from "store";
 import { User } from "types/user";
 
 interface IProps {
   data: User[];
 }
 
-const IndexPage = ({ data }: IProps) => {
-  console.log(data);
+const IndexPage = (_users: IProps) => {
+  const { users, loading, error } = useSelector(selectUsers());
 
-  const dispatch = useDispatch();
-  const { users, loading, error } = useSelector(selectUsers);
-
-  useEffect(() => {
-    async function dispatchGetUsers() {
-      dispatch(getUsers());
-    }
-    dispatchGetUsers();
-  }, [dispatch]);
+  console.log("State on client", { users, loading, error });
 
   if (loading === "loading") {
     return <>Loading...</>;
@@ -34,12 +26,16 @@ const IndexPage = ({ data }: IProps) => {
   });
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const response = await fetch("https://reqres.in/api/users?page=2");
-  const { data } = await response.json();
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async () => {
+    await store.dispatch(getUsers());
 
-  return {
-    props: { data },
-  };
-};
+    console.log("State on server", store.getState());
+
+    return {
+      props: {},
+    };
+  }
+);
+
 export default IndexPage;
