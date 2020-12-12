@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { getUsers, selectUsers } from "slices/users";
+import { fetchUsers, selectUsers } from "slices/users";
 import { wrapper } from "store";
 import { User } from "types/user";
 
@@ -28,7 +28,7 @@ const IndexPage = (_users: IProps) => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async () => {
-    await store.dispatch(getUsers());
+    await store.dispatch(fetchUsers());
 
     console.log("State on server", store.getState());
 

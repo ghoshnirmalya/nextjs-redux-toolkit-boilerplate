@@ -1,14 +1,11 @@
 import { configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 import { Action } from "redux";
-import { usersSlice } from "slices/users";
+import rootReducer from "root-reducer";
 
 const store = () =>
   configureStore({
-    reducer: {
-      [usersSlice.name]: usersSlice.reducer,
-    },
-    devTools: true,
+    reducer: rootReducer,
   });
 
 export type AppStore = ReturnType<typeof store>;

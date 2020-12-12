@@ -28,8 +28,8 @@ function isRejectedAction(action: AnyAction): action is RejectedAction {
   return action.type.endsWith("rejected");
 }
 
-export const getUsers = createAsyncThunk(
-  "users/getUsers",
+export const fetchUsers = createAsyncThunk(
+  "users/fetchUsers",
   async (_, thunkAPI) => {
     try {
       const response = await fetch("https://reqres.in/api/users?page=2");
@@ -60,11 +60,11 @@ export const usersSlice = createSlice({
           ...(action.payload as any)[usersSlice.name],
         };
       })
-      .addCase(getUsers.pending, (state) => {
+      .addCase(fetchUsers.pending, (state) => {
         state.users = [];
         state.loading = "loading";
       })
-      .addCase(getUsers.fulfilled, (state, action) => {
+      .addCase(fetchUsers.fulfilled, (state, action) => {
         state.users = action.payload;
         state.loading = "loaded";
       })
