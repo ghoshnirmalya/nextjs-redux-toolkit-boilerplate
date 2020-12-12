@@ -2,21 +2,21 @@ import {
   Action,
   AnyAction,
   createAction,
-  createAsyncThunk,
   createDraftSafeSelector,
   createSlice,
 } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { AppState } from "store";
+import { fetchUsers } from "thunks/users";
 import { User } from "types/user";
 
-interface RejectedAction extends Action {
+interface IRejectedAction extends Action {
   payload: {
     error: Error;
   };
 }
 
-interface IUsersState {
+interface IInitialState {
   users: User[];
   loading: string;
   error: any;
@@ -24,25 +24,11 @@ interface IUsersState {
 
 const hydrate = createAction(HYDRATE);
 
-function isRejectedAction(action: AnyAction): action is RejectedAction {
+function isRejectedAction(action: AnyAction): action is IRejectedAction {
   return action.type.endsWith("rejected");
 }
 
-export const fetchUsers = createAsyncThunk(
-  "users/fetchUsers",
-  async (_, thunkAPI) => {
-    try {
-      const response = await fetch("https://reqres.in/api/users?page=2");
-      const { data } = await response.json();
-
-      return data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-);
-
-const initialState: IUsersState = {
+const initialState: IInitialState = {
   users: [],
   loading: "idle",
   error: null,

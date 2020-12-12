@@ -1,7 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { fetchUsers, selectUsers } from "slices/users";
+import { selectUsers } from "slices/users";
 import { wrapper } from "store";
+import { fetchUsers } from "thunks/users";
 import { User } from "types/user";
 
 interface IProps {
