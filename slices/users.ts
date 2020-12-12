@@ -1,31 +1,13 @@
-import {
-  Action,
-  AnyAction,
-  createAction,
-  createDraftSafeSelector,
-  createSlice,
-} from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
-import { AppState } from "store";
+import { createSlice } from "@reduxjs/toolkit";
+import handleError from "lib/handle-error";
+import hydrate from "lib/hydrate";
 import { fetchUsers } from "thunks/users";
 import { User } from "types/user";
-
-interface IRejectedAction extends Action {
-  payload: {
-    error: Error;
-  };
-}
 
 interface IInitialState {
   users: User[];
   loading: string;
   error: any;
-}
-
-const hydrate = createAction(HYDRATE);
-
-function isRejectedAction(action: AnyAction): action is IRejectedAction {
-  return action.type.endsWith("rejected");
 }
 
 const initialState: IInitialState = {
@@ -54,15 +36,9 @@ export const usersSlice = createSlice({
         state.users = action.payload;
         state.loading = "loaded";
       })
-      .addMatcher(isRejectedAction, (state, action) => {
+      .addMatcher(handleError, (state, action) => {
         state.loading = "error";
         state.error = action.payload.error;
       });
   },
 });
-
-export const selectUsers = () =>
-  createDraftSafeSelector(
-    (state: AppState) => state,
-    (state: AppState) => state?.[usersSlice.name]
-  );

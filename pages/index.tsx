@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { selectUsers } from "slices/users";
+import { selectUsers } from "selectors/user";
 import { wrapper } from "store";
 import { fetchUsers } from "thunks/users";
 import { User } from "types/user";
